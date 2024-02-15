@@ -1,0 +1,87 @@
+* {
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+#timer {
+	height: 250px;
+	width: 250px;
+	position: relative;
+}
+
+#timer p {
+	position: absolute;
+	margin: auto;
+	color: white;
+	height: fit-content;
+	width: fit-content;
+}
+
+#timer #time {
+	inset: 0;
+	padding-top: 25px;
+	font-size: 3em;
+	font-weight: bold;
+}
+
+#timer #title {
+	left: 0;
+	right: 0;
+	bottom: 22px;
+	font-size: 1.5em;
+}
+
+#app {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	gap: 10px;
+	padding: 10px;
+}
+
+#app .box {
+	flex: 1;
+	padding: 25px;
+	border-radius: 10px;
+	height: 100%;
+}
+
+#app .box.box-large {
+	flex: 2;
+}
+
+#app .box h2 {
+	margin-bottom: 25px;
+}
+
+#app .box * {
+	display: block;
+	text-align: center;
+	margin: auto;
+	font-size: 1.5em;
+}
+
+#app .box input {
+	padding: 10px;
+	margin: 25px auto;
+	font-size: 1.5em;
+}
+
+#app .box input[type="button"] {
+	width: 75%;
+}
+
+#app #work {
+	background: lightblue;
+}
+
+#app #pause {
+	background: lightgreen;
+}
+
+#app #status {
+	background: lightcoral
+}

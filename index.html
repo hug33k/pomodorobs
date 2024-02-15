@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Pomodorosmoze</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div id="app">
+		<div class="box" id="work">
+			<h2>Travail</h2>
+			<label for="work-duration">Durée</label>
+			<input type="number" id="work-duration">
+			<input type="button" value="Lancer" id="work-start" onclick="timerWorkStart()">
+		</div>
+		<div class="box" id="pause">
+			<h2>Pause</h2>
+			<label for="pause-duration">Durée</label>
+			<input type="number" id="pause-duration">
+			<input type="button" value="Lancer" id="pause-start" onclick="timerPauseStart()">
+		</div>
+		<div class="box box-large" id="status">
+			<h2>Statut</h2>
+			<p id="status-current">Rien en cours</p>
+			<input type="button" value="Stopper le timer" id="stop" onclick="timerStop()">
+		</div>
+	</div>
+	<script>
+		const actionsHandlerApp = (action, data) => {
+			console.log(action, data);
+			switch (action) {
+				case "timer-start":
+					console.log("Timer started");
+					console.log(data);
+					break;
+				case "timer-stop":
+					console.log("Timer stopped");
+					console.log(data);
+					break;
+				case "status-connect":
+					console.log(data + " connected");
+					break;
+				default:
+					break;
+			};
+		};
+
+		var config = {
+			channel: "pomodosmoze",
+			author: "app",
+			timers: {
+				work: 25,
+				pause: 5
+			},
+			currentTimer: {
+				type: null,
+				duration: null
+			},
+			handleActions: actionsHandlerApp
+		};
+
+		const timerWorkStart = () => {
+			const newTimer = {
+				type: "work",
+				duration: config.timers.work
+			};
+			timerStart(newTimer);
+		};
+
+		const timerPauseStart = () => {
+			const newTimer = {
+				type: "pause",
+				duration: config.timers.pause
+			};
+			timerStart(newTimer);
+		};
+
+		const timerStop = () => {
+			if (config.currentTimer === null)
+				return;
+			config.currentTimer = null;
+			document.getElementById("status-current").innerText = "Rien en cours";
+			sendData("timer-stop");
+		};
+
+		const timerStart = (timer) => {
+			if (config.currentTimer !== null)
+				timerStop();
+			config.currentTimer = timer;
+			document.getElementById("status-current").innerText = "En cours : " + timer.type;
+			sendData("timer-start", config.currentTimer);
+		};
+
+		const bindData = () => {
+			const workDuration = document.getElementById("work-duration");
+			workDuration.value = config.timers.work;
+			workDuration.onchange = (e) => {
+				config.timers.work = parseInt(e.target.value);
+			};
+			const pauseDuration = document.getElementById("pause-duration");
+			pauseDuration.value = config.timers.pause;
+			pauseDuration.onchange = (e) => {
+				config.timers.pause = parseInt(e.target.value);
+			};
+		}
+
+		window.onload = () => {
+			bindData();
+			runApp();
+		};
+	</script>
+	<script src="app.js"></script>
+</body>
+</html>

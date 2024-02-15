@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Pomodorosmoze</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div id="timer">
+		<img src="./tomato.svg">
+		<p id="time"></p>
+		<p id="title"></p>
+	</div>
+	<script>
+		const actionsHandlerView = (action, data) => {
+			switch (action) {
+				case "timer-start":
+					clearTimer();
+					startTimer(data);
+					break;
+				case "timer-stop":
+					clearTimer();
+					break;
+				case "status-connect":
+					console.log(data + " connected");
+					break;
+				default:
+					break;
+			};
+		};
+
+		const tick = () => {
+			if (config.timerTarget === null)
+				return;
+			var now = new Date();
+			var distance = config.timerTarget - now;
+			var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+			var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+			document.getElementById("time").innerText = (minutes < 10 ? "0" : "") + minutes + " : " + (seconds < 10 ? "0" : "") + seconds;
+			if (distance < 0) {
+				clearTimer(true);
+				document.getElementById("time").innerText = "Finito !";
+			}
+		};
+
+		const startTimer = ({ type, duration }) => {
+			config.currentType = type;
+			document.getElementById("title").innerText = type.charAt(0).toUpperCase() + type.slice(1);
+
+			var target = new Date(Date.now() + duration * 60 * 1000);
+			config.timerTarget = target;
+			console.log("target", target);
+
+			config.currentTimer = setTimeout(() => {
+				console.log("Timer ended");
+			}, duration * 60 * 1000);
+			console.log("Timer started");
+			new Audio(config.currentType + "-start.mp3").play();
+		};
+
+		const clearTimer = (sound=false) => {
+			if (sound)
+				new Audio(config.currentType + "-end.mp3").play();
+			if (config.currentTimer === null)
+				return;
+			clearTimeout(config.currentTimer);
+			config.currentTimer = null;
+			config.timerTarget = null;
+			document.getElementById("title").innerText = "";
+			document.getElementById("time").innerText = "";
+			console.log("Timer cleared");
+		};
+
+		var config = {
+			channel: "pomodosmoze",
+			author: "view",
+			handleActions: actionsHandlerView,
+			currentType: null,
+			currentTimer: null,
+			timerTarget: null
+		};
+
+		window.onload = () => {
+			runApp();
+			setInterval(tick, 1000);
+		};
+	</script>
+	<script src="app.js"></script>
+</body>
+</html>
